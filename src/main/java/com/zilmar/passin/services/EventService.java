@@ -2,6 +2,7 @@ package com.zilmar.passin.services;
 
 import com.zilmar.passin.domain.attendees.Attendee;
 import com.zilmar.passin.domain.events.Event;
+import com.zilmar.passin.domain.events.exceptions.EventNotFoundException;
 import com.zilmar.passin.dto.event.CreateEventRequestDto;
 import com.zilmar.passin.dto.event.EventDetailsResponseDto;
 import com.zilmar.passin.dto.event.EventIdDto;
@@ -24,7 +25,7 @@ public class EventService {
     public EventDetailsResponseDto getEventDetail(UUID eventId) {
         Event event = this.eventRepository
                 .findById(eventId)
-                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + eventId));
+                .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
         List<Attendee> attendeeList = this.attendeeRepository.findByEventId(event.getId());
         return new EventDetailsResponseDto(event, attendeeList.size());
     }
