@@ -26,7 +26,7 @@ public class EventService {
         Event event = this.eventRepository
                 .findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
-        List<Attendee> attendeeList = this.attendeeRepository.findByEventId(event.getId());
+        List<Attendee> attendeeList = this.attendeeRepository.findAllByEventId(event.getId());
         return new EventDetailsResponseDto(event, attendeeList.size());
     }
 
