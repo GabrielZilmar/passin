@@ -1,8 +1,10 @@
 package com.zilmar.passin.controllers;
 
+import com.zilmar.passin.dto.attendee.AttendeeListResponseDto;
 import com.zilmar.passin.dto.event.CreateEventRequestDto;
 import com.zilmar.passin.dto.event.EventDetailsResponseDto;
 import com.zilmar.passin.dto.event.EventIdDto;
+import com.zilmar.passin.services.AttendeeService;
 import com.zilmar.passin.services.EventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class EventController {
     private final EventService eventService;
+    private final AttendeeService attendeeService;
 
     @GetMapping("/{eventId}")
     public ResponseEntity<EventDetailsResponseDto> getEventDetails(@PathVariable UUID eventId) {
@@ -37,5 +40,11 @@ public class EventController {
                 .toUri();
 
         return ResponseEntity.created(uri).body(eventIdDto);
+    }
+
+    @GetMapping("/attendees/{eventId}")
+    public ResponseEntity<AttendeeListResponseDto> getEventAttendees(@PathVariable UUID eventId) {
+        AttendeeListResponseDto attendees = this.attendeeService.getEventsAttendee(eventId);
+        return ResponseEntity.ok(attendees);
     }
 }

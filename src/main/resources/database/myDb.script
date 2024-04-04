@@ -29,7 +29,7 @@ SET FILES NIO TRUE
 SET FILES NIO SIZE 256
 SET FILES LOG TRUE
 SET FILES LOG SIZE 50
-SET FILES CHECK 1836
+SET FILES CHECK 4412
 SET DATABASE COLLATION "SQL_TEXT" PAD SPACE
 CREATE USER SA PASSWORD DIGEST 'd41d8cd98f00b204e9800998ecf8427e'
 ALTER USER SA SET LOCAL TRUE
@@ -57,6 +57,5 @@ SET SCHEMA PUBLIC
 INSERT INTO "flyway_schema_history" VALUES(1,'1','create-table-events','SQL','V1__create-table-events.sql',1863258254,'SA','2024-04-03 20:00:03.072002',3,'1')
 INSERT INTO "flyway_schema_history" VALUES(2,'2','create-table-attendees','SQL','V2__create-table-attendees.sql',1591223361,'SA','2024-04-03 20:00:03.082600',1,'1')
 INSERT INTO "flyway_schema_history" VALUES(3,'3','create-table-check-ins','SQL','V3__create-table-check-ins.sql',787339045,'SA','2024-04-03 20:00:03.088587',0,'1')
-INSERT INTO EVENTS VALUES('3de821bb-865f-40da-9f7e-84db7c3cb938','Event TitAle','Event details ....','event-titale',5)
 INSERT INTO EVENTS VALUES('b20cf750-4e65-42a2-ba26-0d0d9c360bb6','Event Title','Event details ....','event-title',5)
-INSERT INTO EVENTS VALUES('d58b979a-1b22-4368-a453-5616a876e5a2','EAvent TitAle','Event details ....','eavent-titale',5)
+INSERT INTO ATTENDEES VALUES('41cdb9d5-63e5-4e34-a5ca-fe70a4a0d9ad','Gabriel Zilmar','gabriel@zilmar.dev','b20cf750-4e65-42a2-ba26-0d0d9c360bb6','2024-04-04 15:30:45.123456')
