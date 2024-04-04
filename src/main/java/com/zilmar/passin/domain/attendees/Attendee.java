@@ -1,11 +1,9 @@
 package com.zilmar.passin.domain.attendees;
 
+import com.zilmar.passin.domain.checkin.CheckIn;
 import com.zilmar.passin.domain.events.Event;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -31,6 +29,9 @@ public class Attendee {
     @ManyToOne
     @JoinColumn(name = "event_id", nullable = false, unique = true)
     private Event event;
+
+    @OneToOne(mappedBy = "attendee")
+    private CheckIn checkIn;
 
     @Column(name="created_at")
     private LocalDateTime createdAt;
