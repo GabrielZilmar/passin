@@ -2,11 +2,15 @@ package com.zilmar.passin.services;
 
 import com.zilmar.passin.domain.attendees.Attendee;
 import com.zilmar.passin.domain.attendees.exceptions.AttendeeAlreadyRegisteredException;
+import com.zilmar.passin.domain.attendees.exceptions.AttendeeNotFoundException;
+import com.zilmar.passin.dto.attendee.AttendeeBadgeResponseDto;
 import com.zilmar.passin.dto.attendee.AttendeeDetails;
 import com.zilmar.passin.dto.attendee.AttendeeListResponseDto;
+import com.zilmar.passin.dto.attendee.AttendeeBadgeDto;
 import com.zilmar.passin.repositories.AttendeeRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 import java.util.Optional;
@@ -43,5 +47,24 @@ public class AttendeeService {
         if(isAttendeeRegistered.isPresent()) {
             throw new AttendeeAlreadyRegisteredException("Attendee is already registered");
         }
+    }
+
+    public AttendeeBadgeResponseDto getAttendeeBadge(UUID attendeeId, UriComponentsBuilder uriComponentsBuilder) {
+        Attendee attendee = this.attendeeRepository
+                .findById(attendeeId)
+                .orElseThrow(() -> new AttendeeNotFoundException("Not found attendee  with id: " + attendeeId));
+
+        var uri = uriComponentsBuilder
+                .path("/attendees/{attendeeId}/check-in")
+                .buildAndExpand(attendeeId)
+                .toUri()
+                .toString();
+
+        return new AttendeeBadgeResponseDto(new AttendeeBadgeDto(
+                attendee.getName(),
+                attendee.getEmail(),
+                uri,
+                attendee.getEvent().getId()
+        ));
     }
 }
