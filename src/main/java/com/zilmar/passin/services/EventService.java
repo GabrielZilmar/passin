@@ -3,6 +3,9 @@ package com.zilmar.passin.services;
 import com.zilmar.passin.domain.attendees.Attendee;
 import com.zilmar.passin.domain.events.Event;
 import com.zilmar.passin.domain.events.exceptions.EventNotFoundException;
+import com.zilmar.passin.domain.events.exceptions.MaximumAttendeesRegistered;
+import com.zilmar.passin.dto.attendee.AttendeeIdDto;
+import com.zilmar.passin.dto.attendee.AttendeeRequestDto;
 import com.zilmar.passin.dto.event.CreateEventRequestDto;
 import com.zilmar.passin.dto.event.EventDetailsResponseDto;
 import com.zilmar.passin.dto.event.EventIdDto;
@@ -21,11 +24,16 @@ import java.util.UUID;
 public class EventService {
     private final EventRepository eventRepository;
     private final AttendeeRepository attendeeRepository;
+    private final AttendeeService attendeeService;
 
-    public EventDetailsResponseDto getEventDetail(UUID eventId) {
-        Event event = this.eventRepository
+    private Event findByIdOrThrow(UUID eventId) {
+        return this.eventRepository
                 .findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event not found with ID: " + eventId));
+    }
+
+    public EventDetailsResponseDto getEventDetail(UUID eventId) {
+        Event event = this.findByIdOrThrow(eventId);
         List<Attendee> attendeeList = this.attendeeRepository.findAllByEventId(event.getId());
         return new EventDetailsResponseDto(event, attendeeList.size());
     }
@@ -50,5 +58,23 @@ public class EventService {
 
         this.eventRepository.save(newEvent);
         return new EventIdDto(newEvent.getId());
+    }
+
+    public AttendeeIdDto registerAttendeeOnEvent(UUID eventId, AttendeeRequestDto attendeeRequestDto) {
+        this.attendeeService.verifyAttendeeSubscription(attendeeRequestDto.email(), eventId);
+        Event event = this.findByIdOrThrow(eventId);
+
+        List<Attendee> attendeeList = this.attendeeRepository.findAllWithCheckInByEventId(eventId);
+        if(attendeeList.size() >= event.getMaximumAttendees()) {
+            throw new MaximumAttendeesRegistered("The event: " + event.getTitle() + " is already full");
+        }
+
+        Attendee newAttendee = new Attendee();
+        newAttendee.setName(attendeeRequestDto.name());
+        newAttendee.setEmail(attendeeRequestDto.email());
+        newAttendee.setEvent(event);
+
+        this.attendeeService.registerAttendee(newAttendee);
+        return new AttendeeIdDto(newAttendee.getId());
     }
 }
