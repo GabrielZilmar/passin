@@ -1,6 +1,7 @@
 package com.zilmar.passin.services;
 
 import com.zilmar.passin.domain.attendees.Attendee;
+import com.zilmar.passin.domain.attendees.exceptions.AttendeeAlreadyRegisteredException;
 import com.zilmar.passin.dto.attendee.AttendeeDetails;
 import com.zilmar.passin.dto.attendee.AttendeeListResponseDto;
 import com.zilmar.passin.repositories.AttendeeRepository;
@@ -8,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -30,5 +32,16 @@ public class AttendeeService {
         )).toList();
 
         return new AttendeeListResponseDto(attendeeDetailsList);
+    }
+
+    public Attendee registerAttendee(Attendee newAttendee) {
+        return this.attendeeRepository.save(newAttendee);
+    }
+
+    public void verifyAttendeeSubscription(String email, UUID eventId) {
+        Optional<Attendee> isAttendeeRegistered = this.attendeeRepository.findByEventIdAndEmail(eventId, email);
+        if(isAttendeeRegistered.isPresent()) {
+            throw new AttendeeAlreadyRegisteredException("Attendee is already registered");
+        }
     }
 }
