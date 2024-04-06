@@ -20,9 +20,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class AttendeeService {
     private final AttendeeRepository attendeeRepository;
+    private final CheckInService checkInService;
 
-    public List<Attendee> getAllAttendeesFromEvent(UUID eventId) {
-        return this.attendeeRepository.findAllByEventId(eventId);
+    private Attendee getAttendee(UUID attendeeId) {
+        Attendee attendee = this.attendeeRepository
+                .findById(attendeeId)
+                .orElseThrow(() -> new AttendeeNotFoundException("Not found attendee  with id: " + attendeeId));
+
+        return attendee;
     }
 
     public AttendeeListResponseDto getEventsAttendee(UUID eventId) {
@@ -50,10 +55,7 @@ public class AttendeeService {
     }
 
     public AttendeeBadgeResponseDto getAttendeeBadge(UUID attendeeId, UriComponentsBuilder uriComponentsBuilder) {
-        Attendee attendee = this.attendeeRepository
-                .findById(attendeeId)
-                .orElseThrow(() -> new AttendeeNotFoundException("Not found attendee  with id: " + attendeeId));
-
+        Attendee attendee = this.getAttendee(attendeeId);
         var uri = uriComponentsBuilder
                 .path("/attendees/{attendeeId}/check-in")
                 .buildAndExpand(attendeeId)
@@ -66,5 +68,10 @@ public class AttendeeService {
                 uri,
                 attendee.getEvent().getId()
         ));
+    }
+
+    public void checkInAttendee(UUID attendeeId) {
+        Attendee attendee = this.getAttendee(attendeeId);
+        this.checkInService.registerCheckIn(attendee);
     }
 }
