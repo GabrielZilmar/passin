@@ -1,6 +1,8 @@
 package com.zilmar.passin.controllers;
 
+import com.zilmar.passin.dto.attendee.AttendeeIdDto;
 import com.zilmar.passin.dto.attendee.AttendeeListResponseDto;
+import com.zilmar.passin.dto.attendee.AttendeeRequestDto;
 import com.zilmar.passin.dto.event.CreateEventRequestDto;
 import com.zilmar.passin.dto.event.EventDetailsResponseDto;
 import com.zilmar.passin.dto.event.EventIdDto;
@@ -46,5 +48,21 @@ public class EventController {
     public ResponseEntity<AttendeeListResponseDto> getEventAttendees(@PathVariable UUID eventId) {
         AttendeeListResponseDto attendees = this.attendeeService.getEventsAttendee(eventId);
         return ResponseEntity.ok(attendees);
+    }
+
+    @PostMapping("/{eventId}/attendees")
+    public ResponseEntity<AttendeeIdDto> registerParticipant(
+            @PathVariable UUID eventId,
+            @RequestBody AttendeeRequestDto attendeeRequestDto,
+            UriComponentsBuilder uriComponentsBuilder
+            ) {
+        AttendeeIdDto attendeeIdDto = this.eventService.registerAttendeeOnEvent(eventId, attendeeRequestDto);
+
+        var uri = uriComponentsBuilder
+                .path("/{attendeeId}/badge")
+                .buildAndExpand(attendeeIdDto.id())
+                .toUri();
+
+        return ResponseEntity.created(uri).body(attendeeIdDto);
     }
 }
