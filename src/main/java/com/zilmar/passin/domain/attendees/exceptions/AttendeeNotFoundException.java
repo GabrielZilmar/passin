@@ -1,12 +1,10 @@
 package com.zilmar.passin.domain.attendees.exceptions;
 
+import com.zilmar.passin.config.CustomRunTimeException;
 import org.springframework.http.HttpStatus;
 
-public class AttendeeNotFoundException extends RuntimeException {
-    public final HttpStatus status;
-
+public class AttendeeNotFoundException extends CustomRunTimeException {
     public AttendeeNotFoundException(String message) {
-        super(message);
-        this.status = HttpStatus.NOT_FOUND;
+        super(message, HttpStatus.NOT_FOUND);
     }
 }

@@ -1,12 +1,10 @@
 package com.zilmar.passin.domain.events.exceptions;
 
+import com.zilmar.passin.config.CustomRunTimeException;
 import org.springframework.http.HttpStatus;
 
-public class MaximumAttendeesRegistered extends RuntimeException {
-    public final HttpStatus status;
-
+public class MaximumAttendeesRegistered extends CustomRunTimeException {
     public MaximumAttendeesRegistered(String message) {
-        super(message);
-        this.status = HttpStatus.BAD_REQUEST;
+        super(message, HttpStatus.BAD_REQUEST);
     }
 }

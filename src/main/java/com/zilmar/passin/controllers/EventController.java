@@ -59,7 +59,7 @@ public class EventController {
         AttendeeIdDto attendeeIdDto = this.eventService.registerAttendeeOnEvent(eventId, attendeeRequestDto);
 
         var uri = uriComponentsBuilder
-                .path("/{attendeeId}/badge")
+                .path("/attendees/{attendeeId}/badge")
                 .buildAndExpand(attendeeIdDto.id())
                 .toUri();
 
